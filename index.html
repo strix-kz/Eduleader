@@ -1126,8 +1126,8 @@ function resetAll() {
   toast('Жүйе тазаланды ✓');
 }
 
-// ═══════════════ GEMINI AI (Groq ключімен) ═══════════════
-const GROQ_KEY = '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';
+// ═══════════════ AI (Claude API) ═══════════════
+const CLAUDE_KEY = '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';
 let aiHistory = [];
 let currentImgBase64 = null;
 let currentImgType = null;
@@ -1173,21 +1173,27 @@ async function sendAI() {
   const thinkDiv = addMsg('⏳ Жауап дайындалуда...', false);
   clearImg();
 
-  // Build messages for Groq
-  const msgs = [
-    { role: 'system', content: 'Сен Strix.kz сайтының AI көмекшісісің. Қазақстан білім жүйесі, ҰБТ, мамандықтар, университеттер туралы сұрақтарға қазақша жауап бер. Қысқа және нақты болып жауап бер.' },
-    ...aiHistory,
-    { role: 'user', content: userText }
-  ];
+  // Build messages for Claude API
+  const msgs = [...aiHistory, { role: 'user', content: userText }];
 
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY },
-      body: JSON.stringify({ model: 'llama3-8b-8192', messages: msgs, max_tokens: 800 })
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        system: 'Сен Strix.kz сайтының AI көмекшісісің. Қазақстан білім жүйесі, ҰБТ, мамандықтар, университеттер туралы сұрақтарға қазақша жауап бер. Қысқа және нақты болып жауап бер.',
+        messages: msgs
+      })
     });
     const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content || 'Қате болды, қайта көріңіз.';
+    const reply = data.content?.[0]?.text || 'Қате болды, қайта көріңіз.';
     thinkDiv.textContent = reply;
     aiHistory.push({ role: 'user', content: userText });
     aiHistory.push({ role: 'assistant', content: reply });
