@@ -230,7 +230,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
       <div class="q-c" onclick="toast('Профориентация жақында!')"><div class="q-ic">🧭</div><div class="q-t">Профориентация</div><div class="q-s">Мамандық тест</div><div class="q-cnt">→ Жақында</div></div>
     </div>
     <div class="live"><div class="ld"></div> Деректер жаңартылып тұрады</div>
-    <div class="footer">© 2026 <strong>Strix.kz</strong> — Барлық құқықтар қорғалған &nbsp;|&nbsp; Жасаған: <a href="#">Rake / Strix.kz</a></div>
+    <div class="footer">© 2026 <strong>Strix.kz</strong> — Барлық құқықтар қорғалған &nbsp;|&nbsp; Жасаған: <a href="#">Ainur / Strix.kz</a></div>
+
   </div>
 
   <!-- МАМАНДЫҚТАР -->
@@ -487,13 +488,56 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 
   <!-- Settings Tab -->
   <div id="adm-settings" class="adm-section" style="display:none;padding:0 16px 20px">
-    <div style="font-size:.9rem;font-weight:700;color:#a5b4fc;margin-bottom:12px">⚙️ Сайт баптаулары</div>
+    <div style="font-size:.9rem;font-weight:700;color:#a5b4fc;margin-bottom:12px">⚙️ Толық баптаулар</div>
+
+    <!-- API КІЛТТЕРІ -->
+    <div style="background:#1e1b4b;border-radius:14px;padding:16px;border:1px solid #4c1d95;margin-bottom:12px">
+      <div style="font-weight:700;color:#f0abfc;margin-bottom:12px">🔑 API Кілттері</div>
+      <div style="font-size:.72rem;color:#6366f1;margin-bottom:10px">Кілттерді өзгертіп сақтасаңыз, AI дереу жаңа кілтпен жұмыс жасайды</div>
+
+      <div style="font-size:.72rem;color:#a5b4fc;font-weight:700;margin-bottom:4px">🟣 Claude (Anthropic)</div>
+      <div style="position:relative;margin-bottom:10px">
+        <input id="key-claude" type="password" placeholder="sk-ant-api03-..." style="width:100%;padding:10px 40px 10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.75rem;font-family:'Inter',sans-serif;outline:none">
+        <span onclick="toggleKeyVis('key-claude')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.85rem">👁️</span>
+      </div>
+
+      <div style="font-size:.72rem;color:#a5b4fc;font-weight:700;margin-bottom:4px">🔵 Gemini (Google)</div>
+      <div style="position:relative;margin-bottom:10px">
+        <input id="key-gemini" type="password" placeholder="AIzaSy..." style="width:100%;padding:10px 40px 10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.75rem;font-family:'Inter',sans-serif;outline:none">
+        <span onclick="toggleKeyVis('key-gemini')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.85rem">👁️</span>
+      </div>
+
+      <div style="font-size:.72rem;color:#a5b4fc;font-weight:700;margin-bottom:4px">⚫ Grok (xAI)</div>
+      <div style="position:relative;margin-bottom:10px">
+        <input id="key-grok" type="password" placeholder="xai-..." style="width:100%;padding:10px 40px 10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.75rem;font-family:'Inter',sans-serif;outline:none">
+        <span onclick="toggleKeyVis('key-grok')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.85rem">👁️</span>
+      </div>
+
+      <div style="font-size:.72rem;color:#a5b4fc;font-weight:700;margin-bottom:4px">🟠 OpenRouter (GPT-4o)</div>
+      <div style="position:relative;margin-bottom:12px">
+        <input id="key-openrouter" type="password" placeholder="sk-or-v1-..." style="width:100%;padding:10px 40px 10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.75rem;font-family:'Inter',sans-serif;outline:none">
+        <span onclick="toggleKeyVis('key-openrouter')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.85rem">👁️</span>
+      </div>
+      <button onclick="saveApiKeys()" style="width:100%;padding:11px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem">💾 API кілттерін сақтау</button>
+    </div>
+
+    <!-- ADMIN ҚҰПИЯ СӨЗІ -->
     <div style="background:#1e1b4b;border-radius:14px;padding:16px;border:1px solid #312e81;margin-bottom:12px">
-      <div style="font-weight:700;color:#e2e8f0;margin-bottom:10px">🎨 Жоғарғы жолақ мәтіні</div>
+      <div style="font-weight:700;color:#fbbf24;margin-bottom:10px">🔐 Админ кодын өзгерту</div>
+      <input id="set-admin-code" type="text" placeholder="Жаңа код (қазіргі: Айнур777)" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.83rem;margin-bottom:8px;font-family:'Inter',sans-serif;outline:none">
+      <button onclick="saveAdminCode()" style="width:100%;padding:11px;background:#b45309;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem">🔐 Кодты сақтау</button>
+    </div>
+
+    <!-- САЙТ МӘТІНІ -->
+    <div style="background:#1e1b4b;border-radius:14px;padding:16px;border:1px solid #312e81;margin-bottom:12px">
+      <div style="font-weight:700;color:#e2e8f0;margin-bottom:10px">🎨 Басты бет мәтіні</div>
       <input id="set-hero-tag" type="text" placeholder="Мысалы: 2025 жылы ҰБТ" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.83rem;margin-bottom:8px;font-family:'Inter',sans-serif;outline:none">
       <input id="set-hero-title" type="text" placeholder="Hero тақырыбы" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.83rem;margin-bottom:8px;font-family:'Inter',sans-serif;outline:none">
-      <button onclick="saveSettings()" style="width:100%;padding:11px;background:#4f46e5;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem">💾 Сақтау</button>
+      <input id="set-footer-name" type="text" placeholder="Footer аты (Ainur)" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid #312e81;background:#0f0f1a;color:#e2e8f0;font-size:.83rem;margin-bottom:8px;font-family:'Inter',sans-serif;outline:none">
+      <button onclick="saveSettings()" style="width:100%;padding:11px;background:#4f46e5;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem">💾 Мәтінді сақтау</button>
     </div>
+
+    <!-- ЖҮЙЕ АҚПАРАТЫ -->
     <div style="background:#1e1b4b;border-radius:14px;padding:16px;border:1px solid #312e81;margin-bottom:12px">
       <div style="font-weight:700;color:#e2e8f0;margin-bottom:10px">📊 Жүйе ақпараты</div>
       <div style="font-size:.8rem;color:#94a3b8;line-height:2">
@@ -504,6 +548,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
         <div>👥 Қолданушылар: <span style="color:#34d399" id="set-users-count">—</span></div>
       </div>
     </div>
+
     <button onclick="exportData()" style="width:100%;padding:13px;background:#166534;border:none;border-radius:12px;color:#86efac;font-weight:700;cursor:pointer;font-size:.88rem;margin-bottom:10px">📥 Деректерді жүктеу (JSON)</button>
     <button onclick="if(confirm('Бүкіл жүйені тазалайсыз ба?'))resetAll()" style="width:100%;padding:13px;background:#7f1d1d;border:none;border-radius:12px;color:#fca5a5;font-weight:700;cursor:pointer;font-size:.88rem">⚠️ Жүйені толық тазалау</button>
   </div>
@@ -834,7 +879,7 @@ function calcGrant(){
 
 // ═══════════════ ҚОЛДАНУШЫ ЖҮЙЕСІ ═══════════════
 let currentUser = null;
-const ADMIN_CODE = 'Айнур777';
+let ADMIN_CODE = localStorage.getItem('strix_admin_code') || 'Айнур777';
 
 function checkAdminCode(val) {
   // silent — just wait for login button
@@ -1098,26 +1143,71 @@ function loadSettingsFields() {
   const s = JSON.parse(localStorage.getItem('strix_settings') || '{}');
   document.getElementById('set-hero-tag').value = s.heroTag || '2025 жылы ҰБТ';
   document.getElementById('set-hero-title').value = s.heroTitle || 'Мамандық таңда,\nЖОО-ны тап,\nГрантты жеңіп ал!';
+  document.getElementById('set-footer-name').value = s.footerName || 'Ainur';
   document.getElementById('set-specs-count').textContent = SPECS.length;
   document.getElementById('set-unis-count').textContent = UNIS.length;
   const users = JSON.parse(localStorage.getItem('strix_users') || '[]');
   document.getElementById('set-users-count').textContent = users.length;
+  // Load saved API keys
+  const savedKeys = JSON.parse(localStorage.getItem('strix_api_keys') || '{}');
+  if (savedKeys.claude)     document.getElementById('key-claude').value     = savedKeys.claude;
+  if (savedKeys.gemini)     document.getElementById('key-gemini').value     = savedKeys.gemini;
+  if (savedKeys.grok)       document.getElementById('key-grok').value       = savedKeys.grok;
+  if (savedKeys.openrouter) document.getElementById('key-openrouter').value = savedKeys.openrouter;
+  // Load admin code hint
+  document.getElementById('set-admin-code').placeholder = 'Жаңа код (қазіргі: ' + ADMIN_CODE + ')';
 }
 
 function saveSettings() {
   const settings = {
     heroTag: document.getElementById('set-hero-tag').value,
-    heroTitle: document.getElementById('set-hero-title').value
+    heroTitle: document.getElementById('set-hero-title').value,
+    footerName: document.getElementById('set-footer-name').value
   };
   localStorage.setItem('strix_settings', JSON.stringify(settings));
   applySavedSettings();
   toast('Баптаулар сақталды ✓');
 }
 
+function saveApiKeys() {
+  const keys = {
+    claude:     document.getElementById('key-claude').value.trim()     || AI_KEYS.claude,
+    gemini:     document.getElementById('key-gemini').value.trim()     || AI_KEYS.gemini,
+    grok:       document.getElementById('key-grok').value.trim()       || AI_KEYS.grok,
+    openrouter: document.getElementById('key-openrouter').value.trim() || AI_KEYS.openrouter
+  };
+  localStorage.setItem('strix_api_keys', JSON.stringify(keys));
+  // Apply immediately
+  AI_KEYS.claude     = keys.claude;
+  AI_KEYS.gemini     = keys.gemini;
+  AI_KEYS.grok       = keys.grok;
+  AI_KEYS.openrouter = keys.openrouter;
+  toast('API кілттері сақталды ✓');
+}
+
+function saveAdminCode() {
+  const newCode = document.getElementById('set-admin-code').value.trim();
+  if (!newCode) { toast('Код бос болмауы керек!'); return; }
+  localStorage.setItem('strix_admin_code', newCode);
+  ADMIN_CODE = newCode;
+  document.getElementById('set-admin-code').value = '';
+  document.getElementById('set-admin-code').placeholder = 'Жаңа код (қазіргі: ' + ADMIN_CODE + ')';
+  toast('Админ коды өзгертілді ✓');
+}
+
+function toggleKeyVis(id) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
 function applySavedSettings() {
   const s = JSON.parse(localStorage.getItem('strix_settings') || '{}');
   if (s.heroTag) { const el = document.querySelector('.h-tag'); if (el) el.textContent = '✨ ' + s.heroTag; }
   if (s.heroTitle) { const el = document.querySelector('.h-t'); if (el) el.innerHTML = s.heroTitle.replace(/\n/g, '<br>'); }
+  if (s.footerName) {
+    const el = document.querySelector('.footer a');
+    if (el) el.textContent = s.footerName + ' / Strix.kz';
+  }
 }
 
 function exportData() {
@@ -1137,7 +1227,8 @@ function exportData() {
 }
 
 function resetAll() {
-  ['strix_users', 'strix_announces', 'strix_specs_override', 'strix_unis_override', 'strix_settings'].forEach(k => localStorage.removeItem(k));
+  if (!confirm('Бүкіл жүйені тазалайсыз ба?')) return;
+  ['strix_users', 'strix_announces', 'strix_specs_override', 'strix_unis_override', 'strix_settings', 'strix_api_keys'].forEach(k => localStorage.removeItem(k));
   specsOverride = {};
   unisOverride = {};
   admRefreshStats();
@@ -1146,11 +1237,18 @@ function resetAll() {
 }
 
 // ═══════════════ AI — 4 МОДЕЛЬ ═══════════════
-const AI_KEYS = {
+const AI_KEYS_DEFAULT = {
   claude:      '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',
   gemini:      'AIzaSyBavWh6H_pOaeZdazOrJa3L-U9dYWDTqvk',
   grok:        'xai-7G9Ub405iI0vo2Wv0WYaly9C2Ie6JQ2SAMXb0lIPruPb2Azgn1237TQ5JEqg0sFppCJnqPBbVrFsBGV8',
   openrouter:  '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'
+};
+const AI_KEYS_SAVED = JSON.parse(localStorage.getItem('strix_api_keys') || '{}');
+const AI_KEYS = {
+  claude:     AI_KEYS_SAVED.claude     || AI_KEYS_DEFAULT.claude,
+  gemini:     AI_KEYS_SAVED.gemini     || AI_KEYS_DEFAULT.gemini,
+  grok:       AI_KEYS_SAVED.grok       || AI_KEYS_DEFAULT.grok,
+  openrouter: AI_KEYS_SAVED.openrouter || AI_KEYS_DEFAULT.openrouter
 };
 const AI_LABELS = {
   claude:     'Claude Haiku арқылы жауап береді',
