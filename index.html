@@ -169,6 +169,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .adm-spec-row{background:#1e1b4b;border-radius:12px;padding:11px 13px;border:1px solid #312e81;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s}
 .adm-spec-row:hover{border-color:#6366f1}
 .adm-ann-row{background:#1e1b4b;border-radius:12px;padding:12px 14px;border:1px solid #312e81}
+.ai-model-btn{padding:7px 14px;border-radius:20px;border:2px solid var(--br);background:#fff;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--mu);flex-shrink:0;transition:all .15s;display:flex;align-items:center;gap:5px}
+.ai-model-btn.on{border-color:var(--p);background:#EEF0FF;color:var(--p)}
 </style>
 </head>
 <body>
@@ -333,9 +335,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
   </div>
 
   <!-- AI ЧАТ БЕТІ -->
-  <div class="pg" id="pg-ai" style="padding-bottom:140px;min-height:100vh">
+  <div class="pg" id="pg-ai" style="padding-bottom:160px;min-height:100vh">
     <div class="sec">🤖 AI Көмекші</div>
-    <div class="sec-s">Сұрағыңызды жазыңыз немесе сурет жіберіңіз — AI жауап береді</div>
+    <div class="sec-s">Модельді таңдап, сұрағыңызды жазыңыз</div>
+
+    <!-- Model Selector -->
+    <div style="display:flex;gap:7px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none">
+      <div class="ai-model-btn on" id="m-claude" onclick="selectModel('claude',this)">
+        <span style="font-size:.85rem">🟣</span> Claude
+      </div>
+      <div class="ai-model-btn" id="m-gemini" onclick="selectModel('gemini',this)">
+        <span style="font-size:.85rem">🔵</span> Gemini
+      </div>
+      <div class="ai-model-btn" id="m-grok" onclick="selectModel('grok',this)">
+        <span style="font-size:.85rem">⚫</span> Grok
+      </div>
+      <div class="ai-model-btn" id="m-openrouter" onclick="selectModel('openrouter',this)">
+        <span style="font-size:.85rem">🟠</span> GPT-4o
+      </div>
+    </div>
+    <div id="ai-model-label" style="text-align:center;font-size:.72rem;color:var(--mu);margin-bottom:4px">Claude Haiku арқылы жауап береді</div>
 
     <div id="ai-messages" style="padding:0 16px;display:flex;flex-direction:column;gap:12px;min-height:300px"></div>
 
@@ -1126,11 +1145,31 @@ function resetAll() {
   toast('Жүйе тазаланды ✓');
 }
 
-// ═══════════════ AI (Claude API) ═══════════════
-const CLAUDE_KEY = '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';
+// ═══════════════ AI — 4 МОДЕЛЬ ═══════════════
+const AI_KEYS = {
+  claude:      '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',
+  gemini:      'AIzaSyBavWh6H_pOaeZdazOrJa3L-U9dYWDTqvk',
+  grok:        'xai-7G9Ub405iI0vo2Wv0WYaly9C2Ie6JQ2SAMXb0lIPruPb2Azgn1237TQ5JEqg0sFppCJnqPBbVrFsBGV8',
+  openrouter:  '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'
+};
+const AI_LABELS = {
+  claude:     'Claude Haiku арқылы жауап береді',
+  gemini:     'Gemini 1.5 Flash арқылы жауап береді',
+  grok:       'Grok арқылы жауап береді',
+  openrouter: 'GPT-4o (OpenRouter) арқылы жауап береді'
+};
+let currentModel = 'claude';
 let aiHistory = [];
 let currentImgBase64 = null;
 let currentImgType = null;
+
+function selectModel(model, btn) {
+  currentModel = model;
+  document.querySelectorAll('.ai-model-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('ai-model-label').textContent = AI_LABELS[model];
+  aiHistory = [];
+}
 
 function previewImg(input) {
   const file = input.files[0];
@@ -1161,45 +1200,86 @@ function addMsg(text, isUser) {
   return div;
 }
 
+const AI_SYSTEM = 'Сен Strix.kz сайтының AI көмекшісісің. Қазақстан білім жүйесі, ҰБТ, мамандықтар, университеттер туралы сұрақтарға қазақша жауап бер. Қысқа және нақты болып жауап бер.';
+
 async function sendAI() {
   const inp = document.getElementById('ai-inp');
   const text = inp.value.trim();
   if (!text && !currentImgBase64) return;
-
-  const userText = text || (currentImgBase64 ? 'Суретті талда' : '');
+  const userText = text || 'Суретті талда';
   addMsg(userText, true);
-  inp.value = '';
-  inp.style.height = 'auto';
+  inp.value = ''; inp.style.height = 'auto';
   const thinkDiv = addMsg('⏳ Жауап дайындалуда...', false);
+  const imgB64 = currentImgBase64, imgType = currentImgType;
   clearImg();
 
-  // Build messages for Claude API
-  const msgs = [...aiHistory, { role: 'user', content: userText }];
-
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 800,
-        system: 'Сен Strix.kz сайтының AI көмекшісісің. Қазақстан білім жүйесі, ҰБТ, мамандықтар, университеттер туралы сұрақтарға қазақша жауап бер. Қысқа және нақты болып жауап бер.',
-        messages: msgs
-      })
-    });
-    const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Қате болды, қайта көріңіз.';
+    let reply = '';
+    if (currentModel === 'claude') {
+      const content = [];
+      if (imgB64) content.push({ type: 'image', source: { type: 'base64', media_type: imgType, data: imgB64 } });
+      content.push({ type: 'text', text: userText });
+      const msgs = [...aiHistory, { role: 'user', content }];
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': AI_KEYS.claude, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 800, system: AI_SYSTEM, messages: msgs })
+      });
+      const d = await res.json();
+      reply = d.content?.[0]?.text || JSON.stringify(d);
+      aiHistory.push({ role: 'user', content: [{ type: 'text', text: userText }] });
+      aiHistory.push({ role: 'assistant', content: reply });
+
+    } else if (currentModel === 'gemini') {
+      const parts = [];
+      if (imgB64) parts.push({ inlineData: { mimeType: imgType, data: imgB64 } });
+      parts.push({ text: userText });
+      const geminiHistory = aiHistory.map(m => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: typeof m.content === 'string' ? m.content : m.content?.[0]?.text || '' }]
+      }));
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AI_KEYS.gemini}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: AI_SYSTEM }] },
+          contents: [...geminiHistory, { role: 'user', parts }]
+        })
+      });
+      const d = await res.json();
+      reply = d.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(d);
+      aiHistory.push({ role: 'user', content: userText });
+      aiHistory.push({ role: 'assistant', content: reply });
+
+    } else if (currentModel === 'grok') {
+      const msgs = [{ role: 'system', content: AI_SYSTEM }, ...aiHistory.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : userText })), { role: 'user', content: userText }];
+      const res = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI_KEYS.grok },
+        body: JSON.stringify({ model: 'grok-beta', messages: msgs, max_tokens: 800 })
+      });
+      const d = await res.json();
+      reply = d.choices?.[0]?.message?.content || JSON.stringify(d);
+      aiHistory.push({ role: 'user', content: userText });
+      aiHistory.push({ role: 'assistant', content: reply });
+
+    } else if (currentModel === 'openrouter') {
+      const msgs = [{ role: 'system', content: AI_SYSTEM }, ...aiHistory.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : userText })), { role: 'user', content: userText }];
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI_KEYS.openrouter, 'HTTP-Referer': 'https://strix.kz', 'X-Title': 'Strix.kz' },
+        body: JSON.stringify({ model: 'openai/gpt-4o-mini', messages: msgs, max_tokens: 800 })
+      });
+      const d = await res.json();
+      reply = d.choices?.[0]?.message?.content || JSON.stringify(d);
+      aiHistory.push({ role: 'user', content: userText });
+      aiHistory.push({ role: 'assistant', content: reply });
+    }
+
     thinkDiv.textContent = reply;
-    aiHistory.push({ role: 'user', content: userText });
-    aiHistory.push({ role: 'assistant', content: reply });
     if (aiHistory.length > 20) aiHistory = aiHistory.slice(-20);
   } catch (e) {
-    thinkDiv.textContent = 'Интернет қосылымын тексеріңіз.';
+    thinkDiv.textContent = '❌ Қате: ' + e.message;
   }
 }
 
